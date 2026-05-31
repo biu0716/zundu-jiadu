@@ -8,8 +8,8 @@ import os
 LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://api.360.cn/v1")
 LLM_MODEL = os.getenv("LLM_MODEL", "360gpt-pro")
-# 鉴权头前缀：360 智脑留空（Authorization 直接放 key）；DeepSeek/OpenAI 用 "Bearer "。
-LLM_AUTH_PREFIX = os.getenv("LLM_AUTH_PREFIX", "")
+# 鉴权头前缀：360 智脑与 DeepSeek/OpenAI 一致，都用 "Bearer "（官方文档示例 Authorization: Bearer <key>）。
+LLM_AUTH_PREFIX = os.getenv("LLM_AUTH_PREFIX", "Bearer ")
 
 # ---------- 检索 ----------
 TOP_K = int(os.getenv("TOP_K", "3"))

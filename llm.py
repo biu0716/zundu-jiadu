@@ -25,8 +25,11 @@ class LLMClient:
         if not self.available:
             raise RuntimeError("LLM 未配置（缺 API key 或 requests 库）")
         url = f"{self.base_url}/chat/completions"
+        # 规范化鉴权头：无论 prefix 填 "Bearer"、"Bearer "、还是空，都拼成正确格式
+        prefix = (self.auth_prefix or "").strip()
+        auth = f"{prefix} {self.api_key}".strip() if prefix else self.api_key
         headers = {
-            "Authorization": f"{self.auth_prefix}{self.api_key}",
+            "Authorization": auth,
             "Content-Type": "application/json",
         }
         payload = {
