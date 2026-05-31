@@ -1,0 +1,8 @@
+# 必装（最小可运行：只用关键词检索 + 离线知识库路径，无需任何 key）
+requests
+
+# 选装：语义检索（FAISS）。装了效果更好；装不上会自动降级为关键词匹配。
+# 国内下载向量模型慢，可先 export HF_ENDPOINT=https://hf-mirror.com
+sentence-transformers
+faiss-cpu
+numpy

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PRODUCT_NAME}}</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  :root{
+    --green:#07c160; --green-d:#06ad56; --ink:#1a1a1a; --muted:#9a9a9a;
+    --line:#ececec; --bg:#f2f3f5; --highlight:#fff3a3; --red:#e84a3c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 16px 80px;}
+  .head{text-align:center;margin-bottom:22px;}
+  .head h1{font-size:27px;font-weight:800;}
+  .head p{font-size:14px;color:var(--muted);margin-top:8px;}
+
+  .panel{width:100%;max-width:460px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.06);}
+  textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:13px;font-size:16px;font-family:inherit;resize:vertical;min-height:84px;outline:none;}
+  textarea:focus{border-color:var(--green);}
+  .btn{width:100%;margin-top:12px;background:var(--green);color:#fff;border:none;border-radius:10px;padding:14px;font-size:17px;font-weight:700;cursor:pointer;transition:transform .1s;}
+  .btn:active{transform:scale(.98);}
+  .btn:disabled{opacity:.6;cursor:default;}
+  .samples{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{font-size:13px;color:#555;background:#f0f1f3;border-radius:16px;padding:6px 12px;cursor:pointer;border:1px solid #e3e4e6;}
+  .chip:hover{border-color:var(--green);color:var(--green-d);}
+
+  .steps{width:100%;max-width:460px;margin-top:16px;}
+  .steps-hd{font-size:13px;color:var(--muted);margin:0 4px 8px;}
+  .step-row{background:#fff;border-radius:10px;padding:11px 14px;margin-bottom:7px;font-size:14px;color:#555;box-shadow:0 2px 8px rgba(0,0,0,.04);opacity:0;transform:translateX(-8px);display:flex;gap:9px;align-items:baseline;}
+  .step-row.show{animation:slidein .4s ease forwards;}
+  .step-row .n{color:var(--green-d);font-weight:700;flex:0 0 auto;}
+  .step-row .nm{font-weight:700;color:#333;}
+  @keyframes slidein{to{opacity:1;transform:none;}}
+
+  /* 「说给谁听」对象选择 */
+  .audience{width:100%;max-width:420px;margin-top:20px;background:#fff;border-radius:14px;padding:14px 14px 6px;box-shadow:0 4px 16px rgba(0,0,0,.05);}
+  .audience .a-hd{font-size:14px;font-weight:700;color:#333;margin-bottom:10px;}
+  .audience .a-hd span{font-weight:400;color:var(--muted);font-size:12.5px;}
+  .a-btns{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px;}
+  .a-btn{font-size:14px;border:1.5px solid #e3e4e6;background:#fff;border-radius:20px;padding:8px 14px;cursor:pointer;transition:all .15s;}
+  .a-btn:hover{border-color:var(--green);}
+  .a-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
+
+  #cardArea{width:100%;max-width:420px;margin-top:16px;}
+
+  /* ===== 卡片 ===== */
+  .gzh-card{width:100%;}
+  .gzh-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-radius:14px 14px 0 0;border-bottom:1px solid var(--line);}
+  .gzh-ava{width:42px;height:42px;border-radius:8px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;background:linear-gradient(135deg,#34c759,#07c160);}
+  .gzh-name{font-size:15px;font-weight:600;}
+  .gzh-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .gzh-meta{flex:1;}
+  .gzh-follow{font-size:13px;color:var(--green);font-weight:600;border:1px solid var(--green);border-radius:6px;padding:4px 12px;white-space:nowrap;}
+  .article{background:#fff;border-radius:0 0 14px 14px;padding:22px 20px 26px;box-shadow:0 6px 24px rgba(0,0,0,.06);}
+  .tag{display:inline-block;color:#fff;font-size:14px;font-weight:700;letter-spacing:.5px;padding:6px 13px;border-radius:7px;margin-bottom:14px;}
+  h1.title{font-size:26px;line-height:1.5;font-weight:800;margin-bottom:13px;}
+  .byline{font-size:14px;color:var(--muted);padding-bottom:16px;border-bottom:1px dashed var(--line);margin-bottom:18px;}
+  .verdict{background:#f3faf5;border-radius:12px;padding:17px 18px;border-left:6px solid var(--green);margin-bottom:20px;}
+  .verdict .v-label{font-size:14px;font-weight:700;margin-bottom:7px;}
+  .verdict .v-text{font-size:19px;line-height:1.75;font-weight:600;}
+  .safety{background:#fff0ee;border:1px solid #ffc9c2;border-radius:12px;padding:15px 16px;margin-bottom:18px;font-size:16px;line-height:1.7;color:#b3261e;font-weight:600;display:flex;gap:9px;align-items:flex-start;}
+  .analogy{background:#fffbe9;border:1px solid #ffe8a3;border-radius:12px;padding:15px 16px;margin-bottom:18px;font-size:16px;line-height:1.75;color:#7a5c00;}
+  .analogy-src{font-size:12.5px;color:#b09340;margin-top:6px;}
+  .analogy-src a,.source a{color:#2b6cb0;word-break:break-all;}
+  .sec-h{font-size:18px;font-weight:800;margin:22px 0 12px;display:flex;align-items:center;gap:8px;}
+  .sec-h .dot{width:6px;height:19px;border-radius:3px;background:var(--green);}
+  .trick{background:#fff8f2;border:1px solid #ffe0c7;border-radius:12px;padding:8px 16px;}
+  /* 分享内容勾选条 */
+  .toggles{background:#fff;border-radius:12px;padding:13px 15px;margin-top:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  .toggles .t-hd{font-size:13px;color:#666;font-weight:700;margin-bottom:9px;}
+  .toggles .t-item{display:inline-flex;align-items:center;gap:5px;font-size:14px;margin:0 14px 8px 0;cursor:pointer;}
+  .toggles .t-item input{width:16px;height:16px;accent-color:var(--green);}
+  /* 四格看穿（漫画式） */
+  .comic-eq{font-size:24px;text-align:center;background:#fafafa;border:1px solid #eee;border-radius:12px;padding:16px 12px;margin-bottom:10px;line-height:1.5;letter-spacing:1px;font-weight:700;}
+  .comic{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .comic .panel{border-radius:12px;padding:13px 13px 15px;border:1px solid rgba(0,0,0,.06);display:flex;flex-direction:column;gap:6px;min-height:120px;}
+  .comic .p-emoji{font-size:30px;line-height:1;}
+  .comic .p-label{font-size:12.5px;font-weight:800;opacity:.7;letter-spacing:.3px;}
+  .comic .p-text{font-size:15px;line-height:1.55;font-weight:600;color:#222;}
+  .comic .p-panic{background:#fff0ee;border-color:#ffd2cb;}
+  .comic .p-trick{background:#fff6e9;border-color:#ffe2b3;}
+  .comic .p-truth{background:#eef9f1;border-color:#bfe6cc;}
+  .comic .p-tip{background:#eef4ff;border-color:#cbdcff;}
+  .trick-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;}
+  .trick-item:not(:last-child){border-bottom:1px dashed #ffe0c7;}
+  .trick-item b{color:var(--red);background:#ffe0c7;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto;margin-top:2px;}
+  .t-plain{font-size:16.5px;line-height:1.55;color:#333;font-weight:600;}
+  .t-term{font-size:12px;color:#c89b7b;margin-top:3px;}
+  .source{background:#f4f8ff;border-radius:10px;padding:13px 16px;margin:18px 0;}
+  .source .s-title{font-size:14.5px;font-weight:700;color:#2b6cb0;margin-bottom:7px;}
+  .src-name{font-weight:600;color:#2b6cb0;}
+  .src-url{color:#5a7db0;word-break:break-all;}
+  /* 图片模式：导出为图片时，隐藏点不开的链接、按钮、屏幕专用提示 */
+  .gzh-card.exporting .cta,
+  .gzh-card.exporting .cta-tip,
+  .gzh-card.exporting .screen-only,
+  .gzh-card.exporting .src-url{display:none !important;}
+  .source ul{margin:0;padding-left:18px;}
+  .source li{font-size:13.5px;line-height:1.7;color:#3a5a86;}
+  /* 发给家人的话 */
+  .sendmsg{background:#f3faf5;border:1px dashed var(--green);border-radius:14px;padding:16px 16px 18px;margin:20px 0 4px;text-align:center;}
+  .sm-hd{font-size:14px;font-weight:700;color:var(--green-d);margin-bottom:10px;text-align:left;}
+  .sm-body{font-size:16.5px;line-height:1.8;color:#222;text-align:left;background:#fff;border-radius:10px;padding:14px;margin-bottom:14px;transition:opacity .25s;}
+  .sm-body.fading{opacity:.25;}
+  .checkchain{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:18px 0 4px;padding-top:14px;border-top:1px solid var(--line);}
+  .checkchain .step{background:#f2f2f2;border-radius:20px;padding:4px 11px;color:#666;font-weight:600;}
+  .checkchain .arr{color:#ccc;}
+  .verified{text-align:center;font-size:12.5px;color:var(--green-d);font-weight:700;margin-top:8px;}
+  .cta{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;font-size:17px;font-weight:700;padding:14px 32px;border-radius:30px;border:none;cursor:pointer;box-shadow:0 6px 18px rgba(7,193,96,.35);}
+  .cta-tip{font-size:13px;color:var(--muted);margin-top:10px;}
+  .footer{text-align:center;font-size:12px;color:var(--muted);margin-top:22px;padding-top:14px;border-top:1px solid var(--line);line-height:1.7;}
+  /* 保存图片预览弹层 */
+  .preview-mask{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+  .preview-box{background:#fff;border-radius:16px;padding:18px;max-width:440px;width:100%;max-height:90vh;display:flex;flex-direction:column;}
+  .preview-hd{font-size:15px;font-weight:700;text-align:center;margin-bottom:12px;color:#333;}
+  .preview-img{width:100%;border-radius:10px;border:1px solid var(--line);overflow:auto;object-fit:contain;max-height:64vh;}
+  .preview-btns{display:flex;gap:12px;margin-top:14px;}
+  .preview-btns .pv-cancel,.preview-btns .pv-save{flex:1;text-align:center;padding:13px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;border:none;text-decoration:none;}
+  .preview-btns .pv-cancel{background:#f0f1f3;color:#555;}
+  .preview-btns .pv-save{background:var(--green);color:#fff;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>🛡️ {{PRODUCT_NAME}}</h1>
+    <p>家人转发的消息，到底尊嘟假嘟？粘进来，一键看穿，生成能发回群里的科普卡片</p>
+  </div>
+
+  <div class="panel">
+    <textarea id="input" placeholder="粘贴一条家人转发的消息，按回车核实（例：经常喝隔夜水会致癌……）"></textarea>
+    <button class="btn" id="go">🔍 帮我核实一下</button>
+    <div class="samples">
+      <span class="chip">维生素C和虾一起吃会变砒霜</span>
+      <span class="chip">每天喝芹菜汁能根治高血压，不用吃药</span>
+    </div>
+  </div>
+
+  <div class="steps" id="steps"></div>
+  <div class="audience" id="audienceBar" style="display:none">
+    <div class="a-hd">💬 说给谁听？<span>（同一真相，换个对象，换种说法）</span></div>
+    <div class="a-btns" id="audBtns"></div>
+  </div>
+  <div id="cardArea"></div>
+
+<script>
+  const input = document.getElementById('input');
+  const go = document.getElementById('go');
+  const stepsBox = document.getElementById('steps');
+  const cardArea = document.getElementById('cardArea');
+  const audienceBar = document.getElementById('audienceBar');
+  const audBtns = document.getElementById('audBtns');
+
+  let lastResult = null;          // 缓存核查结果，对象切换时复用（不重新核查）
+  let currentAudience = '通用';
+
+  document.querySelectorAll('.chip').forEach(c =>
+    c.addEventListener('click', () => { input.value = c.textContent; }));
+  go.addEventListener('click', run);
+  // 回车发送，Shift+回车换行
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); }
+  });
+  // 回车发送，Shift+回车换行
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); run(); }
+  });
+
+  async function run(){
+    if(go.disabled) return;            // 防止"点击+回车"重复触发
+    const text = input.value.trim();
+    if(!text){ input.focus(); return; }
+    go.disabled = true; go.textContent = '核实中…';
+    stepsBox.innerHTML = ''; cardArea.innerHTML = ''; audienceBar.style.display = 'none';
+    try{
+      const data = await postJSON('/verify', {text});
+      if(data.error){ alert(data.error); return; }
+      lastResult = data.result; currentAudience = '通用';
+      await revealSteps(data.steps);
+      cardArea.innerHTML = data.card_html;
+      // 勾选要展示的模块（影响卡片显示 + 保存的图片）
+      const toggleBar = document.createElement('div');
+      toggleBar.className = 'toggles';
+      toggleBar.innerHTML = '<div class="t-hd">🧩 卡片里展示哪些内容（保存图片也按这个）</div>' +
+        [['真相','.verdict',true],['一眼看穿怎么骗人','.comic-block',true],
+         ['权威来源','.source',true],['给家人的话','.sendmsg',true]]
+        .map(([label,sel,on],i)=>`<label class="t-item"><input type="checkbox" data-sel="${sel}" ${on?'checked':''}> ${label}</label>`).join('');
+      cardArea.appendChild(toggleBar);
+      toggleBar.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+        cb.addEventListener('change',()=>{
+          const el = document.querySelector('#cardArea '+cb.dataset.sel);
+          if(el) el.style.display = cb.checked ? '' : 'none';
+        });
+      });
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'btn';
+      saveBtn.style.marginTop = '14px';
+      saveBtn.textContent = '📷 保存为图片（转发到家庭群）';
+      saveBtn.onclick = () => saveCard(saveBtn);
+      cardArea.appendChild(saveBtn);
+      renderAudiences(data.audiences);
+      audienceBar.style.display = 'block';
+      audienceBar.scrollIntoView({behavior:'smooth', block:'start'});
+    }catch(e){ alert('请求失败：' + e); }
+    finally{ go.disabled = false; go.textContent = '🔍 帮我核实一下'; }
+  }
+
+  function renderAudiences(list){
+    audBtns.innerHTML = '';
+    list.forEach(a => {
+      const b = document.createElement('button');
+      b.className = 'a-btn' + (a.key === currentAudience ? ' active' : '');
+      b.textContent = `${a.emoji} ${a.label}`;
+      b.onclick = () => switchAudience(a.key, b);
+      audBtns.appendChild(b);
+    });
+  }
+
+  async function switchAudience(key, btn){
+    if(!lastResult) return;
+    document.querySelectorAll('.a-btn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    currentAudience = key;
+    const box = document.getElementById('sendMsg');
+    if(box) box.classList.add('fading');
+    try{
+      const data = await postJSON('/rephrase', {result: lastResult, audience: key});
+      if(box){ box.textContent = data.message; box.classList.remove('fading'); }
+    }catch(e){ if(box) box.classList.remove('fading'); }
+  }
+
+  function copyMsg(btn){
+    const box = document.getElementById('sendMsg');
+    if(!box) return;
+    navigator.clipboard.writeText(box.textContent).then(() => {
+      const old = btn.innerHTML;
+      btn.innerHTML = '✅ 已复制，去家庭群粘贴';
+      setTimeout(() => btn.innerHTML = old, 2000);
+    });
+  }
+
+  async function saveCard(btn){
+    const card = document.querySelector('#cardArea .gzh-card');
+    if(!card || typeof html2canvas === 'undefined'){ alert('图片组件未加载，请检查网络后重试'); return; }
+    card.classList.add('exporting');
+    const old = btn.textContent; btn.textContent = '生成图片中…'; btn.disabled = true;
+    try{
+      const canvas = await html2canvas(card, {scale: 2, backgroundColor: '#ffffff', useCORS: true});
+      const dataUrl = canvas.toDataURL('image/png');
+      showPreview(dataUrl);   // 先预览，确认后再下载
+    }catch(e){ alert('生成图片失败：' + e); }
+    finally{
+      card.classList.remove('exporting');
+      btn.textContent = old; btn.disabled = false;
+    }
+  }
+
+  function showPreview(dataUrl){
+    const mask = document.createElement('div');
+    mask.className = 'preview-mask';
+    mask.innerHTML = `
+      <div class="preview-box">
+        <div class="preview-hd">预览 · 满意就保存，发到家庭群</div>
+        <img class="preview-img" src="${dataUrl}" alt="预览">
+        <div class="preview-btns">
+          <button class="pv-cancel">返回修改</button>
+          <a class="pv-save" href="${dataUrl}" download="辟谣卡片.png">⬇️ 保存图片</a>
+        </div>
+      </div>`;
+    document.body.appendChild(mask);
+    mask.querySelector('.pv-cancel').onclick = () => mask.remove();
+    mask.querySelector('.pv-save').onclick = () => setTimeout(() => mask.remove(), 300);
+    mask.addEventListener('click', e => { if(e.target === mask) mask.remove(); });
+  }
+
+  async function postJSON(url, body){
+    const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    return r.json();
+  }
+
+  function revealSteps(steps){
+    return new Promise(resolve => {
+      stepsBox.innerHTML = '';        // 二次保险：渲染前清空
+      const hd = document.createElement('div');
+      hd.className = 'steps-hd'; hd.textContent = '它是这样一步步核实的：';
+      stepsBox.appendChild(hd);
+      steps.forEach((s, i) => {
+        const row = document.createElement('div');
+        row.className = 'step-row';
+        row.innerHTML = `<span class="n">${i+1}</span><span><span class="nm">${s.name}</span>　${s.text}</span>`;
+        stepsBox.appendChild(row);
+        setTimeout(() => row.classList.add('show'), i * 500);
+      });
+      setTimeout(resolve, steps.length * 500 + 200);
+    });
+  }
+</script>
+</body>
+</html>

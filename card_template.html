@@ -1,0 +1,47 @@
+<div class="gzh-card">
+  <div class="gzh-bar">
+    <div class="gzh-ava">护</div>
+    <div class="gzh-meta">
+      <div class="gzh-name">家庭健康守护站</div>
+      <div class="gzh-sub">刚刚 · 已核查 · 可转发</div>
+    </div>
+    <div class="gzh-follow screen-only">已关注</div>
+  </div>
+  <div class="article">
+    <span class="tag" style="background:{{COLOR}}">{{VERDICT_ICON}} 已核查 · {{VERDICT_LABEL}}</span>
+    <h1 class="title">{{TITLE}}</h1>
+    <div class="byline">为爸妈整理 · 转发请放心</div>
+
+    <div class="verdict" style="border-color:{{COLOR}}">
+      <div class="v-label" style="color:{{COLOR}}">✅ 真相</div>
+      <div class="v-text">{{TRUTH}}</div>
+    </div>
+
+    {{SAFETY}}
+    {{ANALOGY}}
+
+    <div class="comic-block card-sec" data-sec="comic">
+      <div class="sec-h"><span class="dot"></span>一眼看穿它怎么骗人</div>
+      {{COMIC}}
+    </div>
+
+    {{SOURCES}}
+
+    <div class="sendmsg card-sec" data-sec="msg">
+      <div class="sm-hd screen-only">💬 这样发到家庭群</div>
+      <div class="sm-body" id="sendMsg">{{MESSAGE}}</div>
+      <button class="cta" onclick="copyMsg(this)">💚 复制这段话，发给家人</button>
+      <div class="cta-tip">上面可点「说给谁听」换对象 · 这段话可直接复制转发</div>
+    </div>
+
+    <div class="checkchain">
+      <span class="step">溯源</span><span class="arr">→</span>
+      <span class="step">交叉验证</span><span class="arr">→</span>
+      <span class="step">逻辑推演</span><span class="arr">→</span>
+      <span class="step">证据链</span>
+    </div>
+    <div class="verified">✔ 已走完 4 步核查 · 可放心转发</div>
+
+    <div class="footer">本文由「{{PRODUCT_NAME}}」整理 · 专为长辈阅读优化<br>看穿套路，不该是少数人的本事</div>
+  </div>
+</div>
